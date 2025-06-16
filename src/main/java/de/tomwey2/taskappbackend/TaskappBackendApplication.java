@@ -1,4 +1,4 @@
-package de.tomwey2.taskapp_backend;
+package de.tomwey2.taskappbackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
