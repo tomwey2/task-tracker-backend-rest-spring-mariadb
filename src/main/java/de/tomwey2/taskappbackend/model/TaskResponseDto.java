@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 
 // Ein DTO, das einen Task repräsentiert.
 // Statt der vollen User-Entität enthält es nur das UserDto.
-public record TaskDto(
+public record TaskResponseDto(
         Long id,
         String title,
         String description,
         boolean completed,
         LocalDateTime createdAt,
-        UserDto reportedBy // Hier verwenden wir unser UserDto
+        UserResponseDto reportedBy // Hier verwenden wir unser UserDto
 ) {}

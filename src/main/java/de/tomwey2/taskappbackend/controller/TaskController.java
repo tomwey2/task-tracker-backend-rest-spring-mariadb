@@ -1,8 +1,10 @@
 package de.tomwey2.taskappbackend.controller;
 
 import de.tomwey2.taskappbackend.model.Task;
-import de.tomwey2.taskappbackend.model.TaskDto;
+import de.tomwey2.taskappbackend.model.TaskRequestDto;
+import de.tomwey2.taskappbackend.model.TaskResponseDto;
 import de.tomwey2.taskappbackend.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +21,13 @@ public class TaskController {
 
     // GET /api/tasks -> Alle Tasks abrufen
     @GetMapping("/tasks")
-    public List<TaskDto> getAllTasks() {
+    public List<TaskResponseDto> getAllTasks() {
         return taskService.getAllTasks();
     }
 
     // GET /api/tasks/{id} -> Einen Task anhand seiner ID abrufen
     @GetMapping("/tasks/{id}")
-    public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id)
                 .map(ResponseEntity::ok) // Kurzform für .map(task -> ResponseEntity.ok(task))
                 .orElse(ResponseEntity.notFound().build());
@@ -33,17 +35,17 @@ public class TaskController {
 
     // POST /api/users/{userId}/tasks -> Erstellt einen neuen Task für einen bestimmten User
     @PostMapping("/users/{userId}/tasks")
-    public ResponseEntity<TaskDto> createTask(
+    public ResponseEntity<TaskResponseDto> createTask(
             @PathVariable Long userId,
-            @RequestBody Task task) {
+            @Valid @RequestBody TaskRequestDto taskRequest) {
 
-        TaskDto createdTask = taskService.createTask(task, userId);
+        TaskResponseDto createdTask = taskService.createTask(taskRequest, userId);
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
     }
 
     // PUT /api/tasks/{id} -> Einen bestehenden Task aktualisieren
     @PutMapping("/tasks/{id}")
-    public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @RequestBody Task task) {
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long id, @RequestBody Task task) {
         return taskService.updateTask(id, task)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

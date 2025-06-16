@@ -1,7 +1,7 @@
 package de.tomwey2.taskappbackend.controller;
 
 import de.tomwey2.taskappbackend.model.User;
-import de.tomwey2.taskappbackend.model.UserDto;
+import de.tomwey2.taskappbackend.model.UserResponseDto;
 import de.tomwey2.taskappbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,13 +18,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody User user) {
-        UserDto createdUser = userService.createUser(user);
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody User user) {
+        UserResponseDto createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<UserDto> getAllUsers() {
+    public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
     }
 }

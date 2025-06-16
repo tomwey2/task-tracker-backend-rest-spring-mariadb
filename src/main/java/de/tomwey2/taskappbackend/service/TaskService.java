@@ -1,12 +1,9 @@
 package de.tomwey2.taskappbackend.service;
 
-import de.tomwey2.taskappbackend.model.Task;
-import de.tomwey2.taskappbackend.model.TaskDto;
-import de.tomwey2.taskappbackend.model.User;
-import de.tomwey2.taskappbackend.model.UserDto;
+import de.tomwey2.taskappbackend.exception.ResourceNotFoundException;
+import de.tomwey2.taskappbackend.model.*;
 import de.tomwey2.taskappbackend.repository.TaskRepository;
 import de.tomwey2.taskappbackend.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,31 +17,37 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository; // UserRepository injecten
 
-    public List<TaskDto> getAllTasks() {
+    public List<TaskResponseDto> getAllTasks() {
         return taskRepository.findAll().stream()
                 .map(this::convertToDto) // Konvertiere jeden Task in ein TaskDto
                 .toList();
     }
 
-    public Optional<TaskDto> getTaskById(Long id) {
+    public Optional<TaskResponseDto> getTaskById(Long id) {
         return taskRepository.findById(id)
                 .map(this::convertToDto); // Konvertiere jeden Task in ein TaskDto
 
     }
 
     // Die Methode braucht jetzt die userId
-    public TaskDto createTask(Task task, Long userId) {
-        // Finde den User, dem der Task gehören soll
+    public TaskResponseDto createTask(TaskRequestDto taskRequestDto, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        // Setze den gefundenen User auf den Task
-        task.setReportedBy(user);
-        task.setId(null); // Sicherstellen, dass eine neue Entität erstellt wird
+        // Manuelle Konvertierung vom DTO zur Entität
+        Task newTask = new Task();
+        newTask.setTitle(taskRequestDto.title());
+        newTask.setDescription(taskRequestDto.description());
+        newTask.setReportedBy(user);
+        // 'completed' und 'createdAt' werden von der Entität selbst gesetzt
 
-        return convertToDto(taskRepository.save(task));
+        Task savedTask = taskRepository.save(newTask);
+
+        // Konvertiere die gespeicherte Entität in ein Response-DTO für die Rückgabe
+        return convertToDto(savedTask);
     }
-    public Optional<TaskDto> updateTask(Long id, Task updatedTask) {
+
+    public Optional<TaskResponseDto> updateTask(Long id, Task updatedTask) {
         return taskRepository.findById(id)
                 .map(existingTask -> {
                     existingTask.setTitle(updatedTask.getTitle());
@@ -63,15 +66,15 @@ public class TaskService {
     }
 
     // Private Hilfsmethode zur Konvertierung
-    private TaskDto convertToDto(Task task) {
+    private TaskResponseDto convertToDto(Task task) {
         // Hier wird der Lazy-Proxy initialisiert, weil wir getReportedBy() aufrufen.
         // Das passiert aber innerhalb der Transaktion im Service, was sicher ist.
-        UserDto userDto = new UserDto(
+        UserResponseDto userDto = new UserResponseDto(
                 task.getReportedBy().getId(),
                 task.getReportedBy().getUsername()
         );
 
-        return new TaskDto(
+        return new TaskResponseDto(
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),
