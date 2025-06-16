@@ -18,7 +18,13 @@ public class Task {
     private boolean completed = false; // Standardwert false
     private LocalDateTime createdAt = LocalDateTime.now(); // Zeitstempel bei Erstellung
 
-    @ManyToOne(fetch = FetchType.LAZY) // LAZY ist performanter
-    @JoinColumn(name = "reported_by_user_id", nullable = false) // Name der Fremdschlüsselspalte
+    @ManyToOne( // Definiert, dass viele Tasks (Many) zu einem User (One) gehören.
+            fetch = FetchType.LAZY // Eine Performance-Optimierung: Der zugehörige User wird erst aus der
+            // Datenbank geladen, wenn er wirklich gebraucht wird.
+    )
+    @JoinColumn( // Definiert die Fremdschlüssel-Spalte in der tasks-Tabelle.
+            name = "reported_by_user_id", // So wird die Spalte in der Datenbank heißen.
+            nullable = false // Stellt sicher, dass jeder Task einem Benutzer zugeordnet sein muss.
+    )
     private User reportedBy; // Name des Feldes wie gewünscht
 }

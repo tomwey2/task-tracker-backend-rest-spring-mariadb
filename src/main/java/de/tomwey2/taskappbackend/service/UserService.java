@@ -1,7 +1,7 @@
 package de.tomwey2.taskappbackend.service;
 
 import de.tomwey2.taskappbackend.model.User;
-import de.tomwey2.taskappbackend.model.UserResponseDto;
+import de.tomwey2.taskappbackend.dto.UserResponseDto;
 import de.tomwey2.taskappbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,8 @@
 package de.tomwey2.taskappbackend.service;
 
+import de.tomwey2.taskappbackend.dto.TaskRequestDto;
+import de.tomwey2.taskappbackend.dto.TaskResponseDto;
+import de.tomwey2.taskappbackend.dto.UserResponseDto;
 import de.tomwey2.taskappbackend.exception.ResourceNotFoundException;
 import de.tomwey2.taskappbackend.model.*;
 import de.tomwey2.taskappbackend.repository.TaskRepository;

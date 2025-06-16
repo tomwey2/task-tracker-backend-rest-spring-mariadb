@@ -1,4 +1,4 @@
-package de.tomwey2.taskappbackend.model;
+package de.tomwey2.taskappbackend.dto;
 
 // Ein DTO, das die öffentlichen Informationen eines Benutzers repräsentiert.
 // Kein Passwort hier!

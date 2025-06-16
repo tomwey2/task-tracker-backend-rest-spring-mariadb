@@ -1,4 +1,4 @@
-package de.tomwey2.taskappbackend.model;
+package de.tomwey2.taskappbackend.dto;
 
 import java.time.LocalDateTime;
 

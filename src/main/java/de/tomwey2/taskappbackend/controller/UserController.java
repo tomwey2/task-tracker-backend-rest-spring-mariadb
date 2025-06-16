@@ -1,7 +1,7 @@
 package de.tomwey2.taskappbackend.controller;
 
 import de.tomwey2.taskappbackend.model.User;
-import de.tomwey2.taskappbackend.model.UserResponseDto;
+import de.tomwey2.taskappbackend.dto.UserResponseDto;
 import de.tomwey2.taskappbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
