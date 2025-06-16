@@ -1,14 +1,12 @@
 package de.tomwey2.taskappbackend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data; // Lombok für weniger Code
 import java.time.LocalDateTime;
 
 @Data // Erzeugt automatisch Getter, Setter, toString(), equals(), hashCode()
 @Entity // Sagt JPA, dass dies eine Datenbank-Tabelle ist
+@Table(name = "tasks")
 public class Task {
 
     @Id // Definiert den Primärschlüssel
@@ -20,4 +18,7 @@ public class Task {
     private boolean completed = false; // Standardwert false
     private LocalDateTime createdAt = LocalDateTime.now(); // Zeitstempel bei Erstellung
 
+    @ManyToOne(fetch = FetchType.LAZY) // LAZY ist performanter
+    @JoinColumn(name = "reported_by_user_id", nullable = false) // Name der Fremdschlüsselspalte
+    private User reportedBy; // Name des Feldes wie gewünscht
 }
