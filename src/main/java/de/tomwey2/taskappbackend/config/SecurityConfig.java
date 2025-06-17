@@ -31,6 +31,9 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /*
+    Wenn wir die User aus der Datenbank holen ist diese Bean nicht mehr notwendig.
+    Zur Dokumentation lasse ich diese Funktion noch auskommentiert im Code.
     @Bean
     public UserDetailsService userDetailsService() {
         // Wir erstellen einen Benutzer direkt im Speicher.
@@ -43,6 +46,7 @@ public class SecurityConfig {
 
         return new InMemoryUserDetailsManager(user);
     }
+    */
 
     // Dies ist das Herzstück. Hier legen wir fest, wer auf welche Endpunkte zugreifen darf.
     @Bean
