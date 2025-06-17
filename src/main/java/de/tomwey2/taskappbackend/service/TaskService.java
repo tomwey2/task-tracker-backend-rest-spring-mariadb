@@ -41,8 +41,8 @@ public class TaskService {
         Task newTask = new Task();
         newTask.setTitle(taskRequestDto.title());
         newTask.setDescription(taskRequestDto.description());
+        newTask.setDueDate(taskRequestDto.dueDate());
         newTask.setReportedBy(user);
-        // 'completed' und 'createdAt' werden von der Entität selbst gesetzt
 
         Task savedTask = taskRepository.save(newTask);
 
@@ -50,12 +50,13 @@ public class TaskService {
         return convertToDto(savedTask);
     }
 
-    public Optional<TaskResponseDto> updateTask(Long id, Task updatedTask) {
+    public Optional<TaskResponseDto> updateTask(Long id, TaskRequestDto updatedTask) {
         return taskRepository.findById(id)
                 .map(existingTask -> {
-                    existingTask.setTitle(updatedTask.getTitle());
-                    existingTask.setDescription(updatedTask.getDescription());
-                    existingTask.setState(updatedTask.getState());
+                    existingTask.setTitle(updatedTask.title());
+                    existingTask.setDescription(updatedTask.description());
+                    existingTask.setState(updatedTask.state());
+                    existingTask.setDueDate(updatedTask.dueDate());
                     return convertToDto(taskRepository.save(existingTask));
                 });
     }
@@ -84,6 +85,7 @@ public class TaskService {
                 task.getTitle(),
                 task.getDescription(),
                 task.getState(),
+                task.getDueDate(),
                 userDto, // Das UserDto hier einfügen
                 task.getCreatedAt(),
                 task.getUpdatedAt()

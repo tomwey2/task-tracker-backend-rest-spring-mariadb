@@ -45,8 +45,8 @@ public class TaskController {
 
     // PUT /api/tasks/{id} -> Einen bestehenden Task aktualisieren
     @PutMapping("/tasks/{id}")
-    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long id, @RequestBody Task task) {
-        return taskService.updateTask(id, task)
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long id, @RequestBody TaskRequestDto taskRequest) {
+        return taskService.updateTask(id, taskRequest)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

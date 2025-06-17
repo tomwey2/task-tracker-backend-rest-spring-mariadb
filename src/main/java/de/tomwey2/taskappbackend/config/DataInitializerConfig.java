@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -60,11 +61,13 @@ public class DataInitializerConfig {
                 Task task1 = new Task();
                 task1.setTitle("Spring Boot lernen");
                 task1.setDescription("Die Grundlagen von Spring Boot und Spring Data JPA verstehen.");
+                task1.setDueDate(LocalDate.now().plusDays(10));
                 task1.setReportedBy(erika);
 
                 Task task2 = new Task();
                 task2.setTitle("API mit Security absichern");
                 task2.setDescription("Einfache Authentifizierung mit Usern aus der DB implementieren.");
+                task2.setDueDate(LocalDate.now().plusDays(2));
                 task2.setReportedBy(erika);
                 task2.setState(Constants.TASK_IN_PROGRESS);
                 task2.setUpdatedAt(LocalDateTime.now());
@@ -72,6 +75,7 @@ public class DataInitializerConfig {
                 Task task3 = new Task();
                 task3.setTitle("Frontend entwerfen");
                 task3.setDescription("Ein Mockup für das React/Angular Frontend erstellen.");
+                task3.setDueDate(LocalDate.now().plusDays(1));
                 task3.setReportedBy(max);
 
                 taskRepository.saveAll(List.of(task1, task2, task3));

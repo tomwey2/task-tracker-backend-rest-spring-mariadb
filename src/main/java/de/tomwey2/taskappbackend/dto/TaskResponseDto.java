@@ -1,5 +1,6 @@
 package de.tomwey2.taskappbackend.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 // Ein DTO, das einen Task repräsentiert.
@@ -9,6 +10,7 @@ public record TaskResponseDto(
         String title,
         String description,
         String state,
+        LocalDate dueDate,
         UserResponseDto reportedBy, // Hier verwenden wir unser UserDto
         LocalDateTime createdAt,
         LocalDateTime updatedAt

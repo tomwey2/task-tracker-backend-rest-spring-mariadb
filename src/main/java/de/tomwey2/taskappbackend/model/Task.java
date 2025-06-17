@@ -3,7 +3,8 @@ package de.tomwey2.taskappbackend.model;
 import de.tomwey2.taskappbackend.Constants;
 import jakarta.persistence.*;
 import lombok.Data; // Lombok für weniger Code
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @Data // Erzeugt automatisch Getter, Setter, toString(), equals(), hashCode()
 @Entity // Sagt JPA, dass dies eine Datenbank-Tabelle ist
@@ -13,6 +14,7 @@ public class Task extends Auditable {
     private String title;
     private String description;
     private String state = Constants.TASK_OPEN;
+    private LocalDate dueDate;
 
     @ManyToOne( // Definiert, dass viele Tasks (Many) zu einem User (One) gehören.
             fetch = FetchType.LAZY // Eine Performance-Optimierung: Der zugehörige User wird erst aus der
