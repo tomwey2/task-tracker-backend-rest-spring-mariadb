@@ -1,5 +1,6 @@
 package de.tomwey2.taskappbackend.model;
 
+import de.tomwey2.taskappbackend.Constants;
 import jakarta.persistence.*;
 import lombok.Data; // Lombok für weniger Code
 import java.time.LocalDateTime;
@@ -15,8 +16,9 @@ public class Task {
 
     private String title;
     private String description;
-    private boolean completed = false; // Standardwert false
+    private String state = Constants.TASK_OPEN;
     private LocalDateTime createdAt = LocalDateTime.now(); // Zeitstempel bei Erstellung
+    private LocalDateTime updatedAt = null; // Zeitstempel letztes Update
 
     @ManyToOne( // Definiert, dass viele Tasks (Many) zu einem User (One) gehören.
             fetch = FetchType.LAZY // Eine Performance-Optimierung: Der zugehörige User wird erst aus der

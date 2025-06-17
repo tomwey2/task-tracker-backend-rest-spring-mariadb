@@ -1,5 +1,6 @@
 package de.tomwey2.taskappbackend.config;
 
+import de.tomwey2.taskappbackend.Constants;
 import de.tomwey2.taskappbackend.model.Task;
 import de.tomwey2.taskappbackend.model.User;
 import de.tomwey2.taskappbackend.repository.TaskRepository;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Configuration
@@ -64,8 +66,8 @@ public class DataInitializerConfig {
                 task2.setTitle("API mit Security absichern");
                 task2.setDescription("Einfache Authentifizierung mit Usern aus der DB implementieren.");
                 task2.setReportedBy(erika);
-                task2.setCompleted(true);
-
+                task2.setState(Constants.TASK_IN_PROGRESS);
+                task2.setUpdatedAt(LocalDateTime.now());
 
                 Task task3 = new Task();
                 task3.setTitle("Frontend entwerfen");

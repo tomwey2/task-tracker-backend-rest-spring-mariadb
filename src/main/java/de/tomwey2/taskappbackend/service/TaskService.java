@@ -55,7 +55,7 @@ public class TaskService {
                 .map(existingTask -> {
                     existingTask.setTitle(updatedTask.getTitle());
                     existingTask.setDescription(updatedTask.getDescription());
-                    existingTask.setCompleted(updatedTask.isCompleted());
+                    existingTask.setState(updatedTask.getState());
                     return convertToDto(taskRepository.save(existingTask));
                 });
     }
@@ -74,15 +74,18 @@ public class TaskService {
         // Das passiert aber innerhalb der Transaktion im Service, was sicher ist.
         UserResponseDto userDto = new UserResponseDto(
                 task.getReportedBy().getId(),
-                task.getReportedBy().getUsername()
+                task.getReportedBy().getUsername(),
+                task.getReportedBy().getCreatedAt(),
+                task.getReportedBy().getUpdatedAt()
         );
 
         return new TaskResponseDto(
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),
-                task.isCompleted(),
+                task.getState(),
                 task.getCreatedAt(),
+                task.getUpdatedAt(),
                 userDto // Das UserDto hier einfügen
         );
     }

@@ -27,7 +27,7 @@ public class UserService {
     }
 
     private UserResponseDto convertToDto(User user) {
-        return new UserResponseDto(user.getId(), user.getUsername());
+        return new UserResponseDto(user.getId(), user.getUsername(), user.getCreatedAt(), user.getUpdatedAt());
 
     }
 }

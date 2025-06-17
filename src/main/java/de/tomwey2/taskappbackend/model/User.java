@@ -1,12 +1,14 @@
 package de.tomwey2.taskappbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.tomwey2.taskappbackend.Constants;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +35,9 @@ public class User implements UserDetails {
 
     // Annahme: Wir fügen ein einfaches Feld für die Rolle hinzu.
     // In einer komplexeren App wäre dies eine eigene @ManytoMany Role-Entität.
-    private String role = "ROLE_USER";
+    private String role = Constants.ROLE_USER;
+    private LocalDateTime createdAt = LocalDateTime.now(); // Zeitstempel bei Erstellung
+    private LocalDateTime updatedAt = null; // Zeitstempel letztes Update
 
     // Ein User kann viele Tasks haben.
     // 'mappedBy' zeigt auf das Feld in der Task-Klasse, das diese Beziehung besitzt.

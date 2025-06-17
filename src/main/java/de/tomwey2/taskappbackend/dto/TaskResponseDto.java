@@ -8,7 +8,8 @@ public record TaskResponseDto(
         Long id,
         String title,
         String description,
-        boolean completed,
+        String state,
         LocalDateTime createdAt,
+        LocalDateTime updatedAt,
         UserResponseDto reportedBy // Hier verwenden wir unser UserDto
 ) {}
