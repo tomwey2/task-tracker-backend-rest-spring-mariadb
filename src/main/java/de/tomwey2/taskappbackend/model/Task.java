@@ -24,5 +24,12 @@ public class Task extends Auditable {
             name = "reported_by_user_id", // So wird die Spalte in der Datenbank heißen.
             nullable = false // Stellt sicher, dass jeder Task einem Benutzer zugeordnet sein muss.
     )
-    private User reportedBy; // Name des Feldes wie gewünscht
+    private User reportedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY )
+    @JoinColumn(
+            name = "belongs_to_project_id",
+            nullable = false
+    )
+    private Project belongsTo;
 }

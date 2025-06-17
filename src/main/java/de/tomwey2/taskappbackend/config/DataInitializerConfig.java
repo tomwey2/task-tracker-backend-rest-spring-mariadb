@@ -1,8 +1,10 @@
 package de.tomwey2.taskappbackend.config;
 
 import de.tomwey2.taskappbackend.Constants;
+import de.tomwey2.taskappbackend.model.Project;
 import de.tomwey2.taskappbackend.model.Task;
 import de.tomwey2.taskappbackend.model.User;
+import de.tomwey2.taskappbackend.repository.ProjectRepository;
 import de.tomwey2.taskappbackend.repository.TaskRepository;
 import de.tomwey2.taskappbackend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ public class DataInitializerConfig {
     @Bean
     public ApplicationRunner initializeDatabase(UserRepository userRepository,
                                                 TaskRepository taskRepository,
+                                                ProjectRepository projectRepository,
                                                 PasswordEncoder passwordEncoder) {
 
         return args -> {
@@ -51,6 +54,15 @@ public class DataInitializerConfig {
                 log.info("Users already exist, skipping user creation.");
             }
 
+            if (projectRepository.count() == 0) {
+                log.info("Creating sample projects...");
+                Project project1 = new Project();
+                project1.setName("Test project");
+
+                projectRepository.saveAll(List.of(project1));
+                log.info("Sample projects created.");
+            }
+
             // --- Tasks erstellen ---
             if (taskRepository.count() == 0) {
                 log.info("Creating sample tasks...");
@@ -58,11 +70,14 @@ public class DataInitializerConfig {
                 User erika = userRepository.findByUsername("erika.muster").get();
                 User max = userRepository.findByUsername("max.power").get();
 
+                Project project = projectRepository.findByName("Test project").get();
+
                 Task task1 = new Task();
                 task1.setTitle("Spring Boot lernen");
                 task1.setDescription("Die Grundlagen von Spring Boot und Spring Data JPA verstehen.");
                 task1.setDueDate(LocalDate.now().plusDays(10));
                 task1.setReportedBy(erika);
+                task1.setBelongsTo(project);
 
                 Task task2 = new Task();
                 task2.setTitle("API mit Security absichern");
@@ -71,12 +86,14 @@ public class DataInitializerConfig {
                 task2.setReportedBy(erika);
                 task2.setState(Constants.TASK_IN_PROGRESS);
                 task2.setUpdatedAt(LocalDateTime.now());
+                task2.setBelongsTo(project);
 
                 Task task3 = new Task();
                 task3.setTitle("Frontend entwerfen");
                 task3.setDescription("Ein Mockup für das React/Angular Frontend erstellen.");
                 task3.setDueDate(LocalDate.now().plusDays(1));
                 task3.setReportedBy(max);
+                task3.setBelongsTo(project);
 
                 taskRepository.saveAll(List.of(task1, task2, task3));
                 log.info("Sample tasks created.");

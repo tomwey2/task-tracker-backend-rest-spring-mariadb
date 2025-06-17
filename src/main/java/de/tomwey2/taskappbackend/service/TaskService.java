@@ -5,6 +5,7 @@ import de.tomwey2.taskappbackend.dto.TaskResponseDto;
 import de.tomwey2.taskappbackend.dto.UserResponseDto;
 import de.tomwey2.taskappbackend.exception.ResourceNotFoundException;
 import de.tomwey2.taskappbackend.model.*;
+import de.tomwey2.taskappbackend.repository.ProjectRepository;
 import de.tomwey2.taskappbackend.repository.TaskRepository;
 import de.tomwey2.taskappbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository; // UserRepository injecten
+    private final ProjectRepository projectRepository;
 
     public List<TaskResponseDto> getAllTasks() {
         return taskRepository.findAll().stream()
@@ -37,12 +39,16 @@ public class TaskService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
+        Project project = projectRepository.findByName(taskRequestDto.projectName())
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with name: " + taskRequestDto.projectName()));
+
         // Manuelle Konvertierung vom DTO zur Entität
         Task newTask = new Task();
         newTask.setTitle(taskRequestDto.title());
         newTask.setDescription(taskRequestDto.description());
         newTask.setDueDate(taskRequestDto.dueDate());
         newTask.setReportedBy(user);
+        newTask.setBelongsTo(project);
 
         Task savedTask = taskRepository.save(newTask);
 
