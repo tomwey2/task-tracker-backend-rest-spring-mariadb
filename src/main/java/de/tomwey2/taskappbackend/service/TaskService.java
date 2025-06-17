@@ -84,9 +84,9 @@ public class TaskService {
                 task.getTitle(),
                 task.getDescription(),
                 task.getState(),
+                userDto, // Das UserDto hier einfügen
                 task.getCreatedAt(),
-                task.getUpdatedAt(),
-                userDto // Das UserDto hier einfügen
+                task.getUpdatedAt()
         );
     }
 }

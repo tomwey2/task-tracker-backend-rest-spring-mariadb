@@ -8,17 +8,11 @@ import java.time.LocalDateTime;
 @Data // Erzeugt automatisch Getter, Setter, toString(), equals(), hashCode()
 @Entity // Sagt JPA, dass dies eine Datenbank-Tabelle ist
 @Table(name = "tasks")
-public class Task {
-
-    @Id // Definiert den Primärschlüssel
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Sorgt für Auto-Increment des Schlüssels
-    private Long id;
+public class Task extends Auditable {
 
     private String title;
     private String description;
     private String state = Constants.TASK_OPEN;
-    private LocalDateTime createdAt = LocalDateTime.now(); // Zeitstempel bei Erstellung
-    private LocalDateTime updatedAt = null; // Zeitstempel letztes Update
 
     @ManyToOne( // Definiert, dass viele Tasks (Many) zu einem User (One) gehören.
             fetch = FetchType.LAZY // Eine Performance-Optimierung: Der zugehörige User wird erst aus der

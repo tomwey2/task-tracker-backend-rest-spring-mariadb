@@ -9,7 +9,7 @@ public record TaskResponseDto(
         String title,
         String description,
         String state,
+        UserResponseDto reportedBy, // Hier verwenden wir unser UserDto
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        UserResponseDto reportedBy // Hier verwenden wir unser UserDto
+        LocalDateTime updatedAt
 ) {}
