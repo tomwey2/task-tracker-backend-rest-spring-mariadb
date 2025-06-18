@@ -28,6 +28,13 @@ public class Task extends Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(
+            name = "assigned_to_user_id",
+            nullable = true
+    )
+    private User assignedTo;
+
+    @ManyToOne(fetch = FetchType.LAZY )
+    @JoinColumn(
             name = "belongs_to_project_id",
             nullable = false
     )

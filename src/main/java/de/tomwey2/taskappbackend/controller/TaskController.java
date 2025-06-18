@@ -33,7 +33,7 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // POST /api/users/{userId}/tasks -> Erstellt einen neuen Task für einen bestimmten User
+    // POST /api/users/{userId}/tasks -> Erstellt einen neuen Task. Der User userId ist der Reporter
     @PostMapping("/users/{userId}/tasks")
     public ResponseEntity<TaskResponseDto> createTask(
             @PathVariable Long userId,

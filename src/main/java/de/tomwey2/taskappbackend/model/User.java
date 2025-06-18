@@ -36,10 +36,14 @@ public class User extends Auditable implements UserDetails {
     // 'mappedBy' zeigt auf das Feld in der Task-Klasse, das diese Beziehung besitzt.
     @OneToMany(mappedBy = "reportedBy")
     @JsonIgnore // WICHTIG: Verhindert die Endlos-Rekursion bei der JSON-Ausgabe
-    private Set<Task> tasks;
+    private Set<Task> reportedTasks;
 
+    @OneToMany(mappedBy = "assignedTo")
+    @JsonIgnore
+    private Set<Task> assignedTasks;
+
+    // Ab hier kommen die Methoden für das Interface UserDetails
     // getPassword() wird von Lombok @Data bereits generiert.
-
     // getUsername() wird von Lombok @Data bereits generiert.
 
     @Override
