@@ -13,6 +13,7 @@ public record TaskResponseDto(
         LocalDate deadline,
         UserResponseDto reportedBy, // Hier verwenden wir unser UserDto
         UserResponseDto assignedTo,
+        ProjectResponseDto belongsTo,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

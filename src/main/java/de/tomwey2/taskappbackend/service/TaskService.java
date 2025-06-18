@@ -1,5 +1,6 @@
 package de.tomwey2.taskappbackend.service;
 
+import de.tomwey2.taskappbackend.dto.ProjectResponseDto;
 import de.tomwey2.taskappbackend.dto.TaskRequestDto;
 import de.tomwey2.taskappbackend.dto.TaskResponseDto;
 import de.tomwey2.taskappbackend.dto.UserResponseDto;
@@ -100,6 +101,13 @@ public class TaskService {
                 task.getAssignedTo().getUpdatedAt()
         );
 
+        ProjectResponseDto projectDto = new ProjectResponseDto(
+                task.getBelongsTo().getId(),
+                task.getBelongsTo().getName(),
+                task.getReportedBy().getCreatedAt(),
+                task.getReportedBy().getUpdatedAt()
+        );
+
         return new TaskResponseDto(
                 task.getId(),
                 task.getTitle(),
@@ -108,6 +116,7 @@ public class TaskService {
                 task.getDeadline(),
                 userDtoReportedBy, // Das UserDto hier einfügen
                 userDtoAssignedTo,
+                projectDto,
                 task.getCreatedAt(),
                 task.getUpdatedAt()
         );

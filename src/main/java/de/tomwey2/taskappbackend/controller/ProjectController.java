@@ -1,9 +1,11 @@
 package de.tomwey2.taskappbackend.controller;
 
 import de.tomwey2.taskappbackend.dto.ProjectResponseDto;
+import de.tomwey2.taskappbackend.dto.TaskResponseDto;
 import de.tomwey2.taskappbackend.model.Project;
 import de.tomwey2.taskappbackend.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,5 +28,12 @@ public class ProjectController {
     @GetMapping
     public List<ProjectResponseDto> getAllProjects() {
         return projectService.getAllProjects();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectResponseDto>  getProjectById(@PathVariable Long id) {
+        return projectService.getProjectById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
