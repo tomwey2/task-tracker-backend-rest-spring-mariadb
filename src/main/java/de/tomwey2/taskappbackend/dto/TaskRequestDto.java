@@ -20,9 +20,9 @@ public record TaskRequestDto(
         @NotNull(message = "State is required")
         String state,
 
-        @NotNull(message = "Due date is required")
-        @FutureOrPresent(message = "Due date must be in the present or future")
-        LocalDate dueDate,
+        @NotNull(message = "Deadline is required")
+        @FutureOrPresent(message = "Deadline must be in the present or future")
+        LocalDate deadline,
 
         @NotNull(message = "Project name is required")
         String projectName

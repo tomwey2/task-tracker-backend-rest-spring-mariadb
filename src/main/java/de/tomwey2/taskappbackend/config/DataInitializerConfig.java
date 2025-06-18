@@ -74,14 +74,14 @@ public class DataInitializerConfig {
                 Task task1 = new Task();
                 task1.setTitle("Spring Boot lernen");
                 task1.setDescription("Die Grundlagen von Spring Boot und Spring Data JPA verstehen.");
-                task1.setDueDate(LocalDate.now().plusDays(1));
+                task1.setDeadline(LocalDate.now().plusDays(1));
                 task1.setReportedBy(erika);
                 task1.setBelongsTo(p1);
 
                 Task task2 = new Task();
                 task2.setTitle("API mit Security absichern");
                 task2.setDescription("Einfache Authentifizierung mit Usern aus der DB implementieren.");
-                task2.setDueDate(LocalDate.now().plusDays(2));
+                task2.setDeadline(LocalDate.now().plusDays(2));
                 task2.setReportedBy(erika);
                 task2.setState(Constants.TASK_IN_PROGRESS);
                 task2.setUpdatedAt(LocalDateTime.now());
@@ -91,7 +91,7 @@ public class DataInitializerConfig {
                 Task task3 = new Task();
                 task3.setTitle("Frontend entwerfen");
                 task3.setDescription("Ein Mockup für das React/Angular Frontend erstellen.");
-                task3.setDueDate(LocalDate.now().plusDays(10));
+                task3.setDeadline(LocalDate.now().plusDays(10));
                 task3.setReportedBy(max);
                 task3.setBelongsTo(p1);
                 task3.setAssignedTo(erika);

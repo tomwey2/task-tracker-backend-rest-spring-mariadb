@@ -21,8 +21,13 @@ public class TaskController {
 
     // GET /api/tasks -> Alle Tasks abrufen
     @GetMapping("/tasks")
-    public List<TaskResponseDto> getAllTasks() {
-        return taskService.getAllTasks();
+    public List<TaskResponseDto> findTasks(
+            @RequestParam(name = "projectId", required = false) Long projectId,
+            @RequestParam(name = "assignedToUserId", required = false) Long assignedToUserId) {
+
+        // Wenn beide Parameter null sind, funktioniert dies wie eine "findAll"-Abfrage.
+        // Andernfalls wird gefiltert.
+        return taskService.searchTasks(projectId, assignedToUserId);
     }
 
     // GET /api/tasks/{id} -> Einen Task anhand seiner ID abrufen

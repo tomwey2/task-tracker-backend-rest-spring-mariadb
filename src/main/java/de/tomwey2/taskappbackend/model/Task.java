@@ -14,7 +14,7 @@ public class Task extends Auditable {
     private String title;
     private String description;
     private String state = Constants.TASK_OPEN;
-    private LocalDate dueDate;
+    private LocalDate deadline;
 
     @ManyToOne( // Definiert, dass viele Tasks (Many) zu einem User (One) gehören.
             fetch = FetchType.LAZY // Eine Performance-Optimierung: Der zugehörige User wird erst aus der

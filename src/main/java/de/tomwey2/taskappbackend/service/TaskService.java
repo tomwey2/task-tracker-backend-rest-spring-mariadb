@@ -46,7 +46,7 @@ public class TaskService {
         Task newTask = new Task();
         newTask.setTitle(taskRequestDto.title());
         newTask.setDescription(taskRequestDto.description());
-        newTask.setDueDate(taskRequestDto.dueDate());
+        newTask.setDeadline(taskRequestDto.deadline());
         newTask.setReportedBy(user);
         newTask.setBelongsTo(project);
 
@@ -62,7 +62,7 @@ public class TaskService {
                     existingTask.setTitle(updatedTask.title());
                     existingTask.setDescription(updatedTask.description());
                     existingTask.setState(updatedTask.state());
-                    existingTask.setDueDate(updatedTask.dueDate());
+                    existingTask.setDeadline(updatedTask.deadline());
                     return convertToDto(taskRepository.save(existingTask));
                 });
     }
@@ -75,15 +75,29 @@ public class TaskService {
         return false;
     }
 
+    public List<TaskResponseDto> searchTasks(Long projectId, Long assignedToUserId) {
+        return taskRepository.searchTasks(projectId, assignedToUserId)
+                .stream()
+                .map(this::convertToDto) // Wiederverwendung deiner Konvertierungsmethode
+                .toList();
+    }
+
     // Private Hilfsmethode zur Konvertierung
     private TaskResponseDto convertToDto(Task task) {
         // Hier wird der Lazy-Proxy initialisiert, weil wir getReportedBy() aufrufen.
         // Das passiert aber innerhalb der Transaktion im Service, was sicher ist.
-        UserResponseDto userDto = new UserResponseDto(
+        UserResponseDto userDtoReportedBy = new UserResponseDto(
                 task.getReportedBy().getId(),
                 task.getReportedBy().getUsername(),
                 task.getReportedBy().getCreatedAt(),
                 task.getReportedBy().getUpdatedAt()
+        );
+
+        UserResponseDto userDtoAssignedTo = task.getAssignedTo() == null ? null : new UserResponseDto(
+                task.getAssignedTo().getId(),
+                task.getAssignedTo().getUsername(),
+                task.getAssignedTo().getCreatedAt(),
+                task.getAssignedTo().getUpdatedAt()
         );
 
         return new TaskResponseDto(
@@ -91,8 +105,9 @@ public class TaskService {
                 task.getTitle(),
                 task.getDescription(),
                 task.getState(),
-                task.getDueDate(),
-                userDto, // Das UserDto hier einfügen
+                task.getDeadline(),
+                userDtoReportedBy, // Das UserDto hier einfügen
+                userDtoAssignedTo,
                 task.getCreatedAt(),
                 task.getUpdatedAt()
         );

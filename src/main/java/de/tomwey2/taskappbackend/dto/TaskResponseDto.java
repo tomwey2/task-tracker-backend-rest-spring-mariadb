@@ -10,8 +10,9 @@ public record TaskResponseDto(
         String title,
         String description,
         String state,
-        LocalDate dueDate,
+        LocalDate deadline,
         UserResponseDto reportedBy, // Hier verwenden wir unser UserDto
+        UserResponseDto assignedTo,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}
