@@ -1,7 +1,6 @@
 package de.tomwey2.taskappbackend.service;
 
-import de.tomwey2.taskappbackend.dto.ProjectResponseDto;
-import de.tomwey2.taskappbackend.dto.TaskResponseDto;
+import de.tomwey2.taskappbackend.dto.ProjectRequestDto;
 import de.tomwey2.taskappbackend.model.Project;
 import de.tomwey2.taskappbackend.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,24 +15,18 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    public ProjectResponseDto createProject(Project project) {
-        project.setId(null);
-        return convertToDto(projectRepository.save(project));
+    public Project createProject(ProjectRequestDto projectRequestDto) {
+        Project newProject = new Project();
+        newProject.setName(projectRequestDto.name());
+        return projectRepository.save(newProject);
     }
 
-    public List<ProjectResponseDto> getAllProjects() {
-        return projectRepository.findAll().stream()
-                .map(this::convertToDto)
-                .toList();
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 
-    public Optional<ProjectResponseDto> getProjectById(Long id) {
-        return projectRepository.findById(id)
-                .map(this::convertToDto);
-
+    public Optional<Project> getProjectById(Long id) {
+        return projectRepository.findById(id);
     }
 
-    private ProjectResponseDto convertToDto(Project project) {
-        return new ProjectResponseDto(project.getId(), project.getName(), project.getCreatedAt(), project.getUpdatedAt());
-    }
 }

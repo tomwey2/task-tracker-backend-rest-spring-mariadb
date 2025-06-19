@@ -1,9 +1,9 @@
-package de.tomwey2.taskappbackend.model;
+package de.tomwey2.taskappbackend.dto;
 
 import de.tomwey2.taskappbackend.controller.ProjectController;
 import de.tomwey2.taskappbackend.controller.TaskController;
 import de.tomwey2.taskappbackend.controller.UserController; // Annahme: Du hast einen UserController
-import de.tomwey2.taskappbackend.dto.TaskResponseDto;
+import de.tomwey2.taskappbackend.model.Task;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;

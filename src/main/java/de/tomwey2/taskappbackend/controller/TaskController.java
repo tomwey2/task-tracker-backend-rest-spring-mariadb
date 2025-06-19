@@ -3,7 +3,7 @@ package de.tomwey2.taskappbackend.controller;
 import de.tomwey2.taskappbackend.dto.TaskRequestDto;
 import de.tomwey2.taskappbackend.dto.TaskResponseDto;
 import de.tomwey2.taskappbackend.model.Task;
-import de.tomwey2.taskappbackend.model.TaskModelAssembler;
+import de.tomwey2.taskappbackend.dto.TaskModelAssembler;
 import de.tomwey2.taskappbackend.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
