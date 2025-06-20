@@ -1,5 +1,6 @@
 package de.tomwey2.taskappbackend.controller;
 
+import de.tomwey2.taskappbackend.MariaDbContainerTest;
 import de.tomwey2.taskappbackend.repository.ProjectRepository;
 import de.tomwey2.taskappbackend.repository.TaskRepository;
 import de.tomwey2.taskappbackend.repository.UserRepository;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @Testcontainers // 1. Aktiviert die Testcontainers-JUnit-5-Erweiterung
 @Sql("/test-data.sql") // Initialisiert die MariaDb Testdatenbank im Container mit Testdaten
-class TaskControllerIntegrationTest {
+class TaskControllerIntegrationTest extends MariaDbContainerTest {
     private static final String testUsername = "erika.muster";
     private static final String testPassword = "password123";
 
@@ -42,21 +43,6 @@ class TaskControllerIntegrationTest {
     private ProjectRepository projectRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    // 2. Deklariert einen MariaDB-Container.
-    // 'static' sorgt dafür, dass der Container nur einmal für alle Tests in dieser Klasse gestartet wird.
-    @Container
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>("mariadb:11.8.2"); // Verwende ein passendes MariaDB-Image
-
-    // 3. Konfiguriert die DataSource-Properties dynamisch zur Laufzeit.
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mariaDBContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", mariaDBContainer::getUsername);
-        registry.add("spring.datasource.password", mariaDBContainer::getPassword);
-        // Wir müssen Hibernate sagen, welchen SQL-Dialekt es verwenden soll
-        registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.MariaDBDialect");
-    }
 
     @Test
     void whenGetTasks_thenReturnsOk() throws Exception {
