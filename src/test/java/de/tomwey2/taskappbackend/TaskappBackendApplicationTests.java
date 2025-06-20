@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class TaskappBackendApplicationTests {
 
-	//@Test
+	@Test
 	void contextLoads() {
 	}
 
