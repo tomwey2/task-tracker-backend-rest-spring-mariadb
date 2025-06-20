@@ -1,5 +1,8 @@
 pipeline {
      agent any
+     tools {
+        maven 'Maven 3.3.9'
+     }
      environment {
         GHCR_CREDENTIALS = credentials("tomwey2-ghcr")
      }
