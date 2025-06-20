@@ -47,7 +47,7 @@ pipeline {
         }
         stage("Docker build") {
             steps {
-                sh "docker build -t ghcr.io/tomwey2/taskapp-backend:$IMAGE_VERSION -t ghcr.io/tomwey2/jenkins-agent:latest ."
+                sh "docker build -t ghcr.io/tomwey2/taskapp-backend:$IMAGE_VERSION -t ghcr.io/tomwey2/taskapp-backend:latest ."
                 sh "docker login --username $GHCR_CREDENTIALS_USR --password $GHCR_CREDENTIALS_PSW ghcr.io"
                 sh "docker push ghcr.io/tomwey2/taskapp-backend:$IMAGE_VERSION"
                 sh "docker push ghcr.io/tomwey2/taskapp-backend:latest"
