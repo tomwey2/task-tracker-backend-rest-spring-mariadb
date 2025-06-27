@@ -81,7 +81,7 @@ public class TaskController {
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "404", description = "User with ID Not Found"),
     })
-    @PostMapping("/users/{projectId}/{userId}/tasks")
+    @PostMapping("/projects/{projectId}/users/{userId}/tasks")
     public ResponseEntity<EntityModel<TaskResponseDto>> createTask(
             @Parameter(description = "ID of the project")  // Swagger-UI
             @PathVariable Long projectId,
