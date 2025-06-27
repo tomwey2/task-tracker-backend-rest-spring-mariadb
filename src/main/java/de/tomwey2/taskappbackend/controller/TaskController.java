@@ -74,21 +74,22 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // POST /api/users/{userId}/tasks -> Erstellt einen neuen Task. Der User userId ist der Reporter
     @Operation(
-            summary = "Create a new task",
+            summary = "Create a new task for a given project",
             description = "Creates a new task. The user ID is the reporter of the task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "404", description = "User with ID Not Found"),
     })
-    @PostMapping("/users/{userId}/tasks")
+    @PostMapping("/users/{projectId}/{userId}/tasks")
     public ResponseEntity<EntityModel<TaskResponseDto>> createTask(
+            @Parameter(description = "ID of the project")  // Swagger-UI
+            @PathVariable Long projectId,
             @Parameter(description = "ID of the user")  // Swagger-UI
             @PathVariable Long userId,
             @Valid @RequestBody TaskRequestDto taskRequest) {
 
-        Task task = taskService.createTask(taskRequest, userId);
+        Task task = taskService.createTask(taskRequest, projectId, userId);
         return new ResponseEntity<>(taskModelAssembler.toModel(task), HttpStatus.CREATED);
     }
 

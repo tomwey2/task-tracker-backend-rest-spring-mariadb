@@ -37,18 +37,24 @@ public class DataInitializerConfig {
             if (userRepository.count() == 0) {
                 log.info("Creating sample users...");
                 User user1 = new User();
-                user1.setUsername("erika.muster");
-                user1.setEmail("erika@example.com");
-                user1.setPassword(passwordEncoder.encode("password123"));
+                user1.setUsername("n8n");  // User für n8n Workflows
+                user1.setEmail("n8n@example.com");
+                user1.setPassword(passwordEncoder.encode("password000"));
                 user1.setRole("ROLE_USER");
 
                 User user2 = new User();
-                user2.setUsername("max.power");
-                user2.setEmail("max@example.com");
-                user2.setPassword(passwordEncoder.encode("password456"));
+                user2.setUsername("erika.muster"); // Projektleiterin "Software"
+                user2.setEmail("erika@example.com");
+                user2.setPassword(passwordEncoder.encode("password123"));
                 user2.setRole("ROLE_USER");
 
-                userRepository.saveAll(List.of(user1, user2));
+                User user3 = new User();
+                user3.setUsername("max.power"); // Projektleiter "Hardware"
+                user3.setEmail("max@example.com");
+                user3.setPassword(passwordEncoder.encode("password456"));
+                user3.setRole("ROLE_USER");
+
+                userRepository.saveAll(List.of(user1, user2, user3));
                 log.info("Sample users created.");
             } else {
                 log.info("Users already exist, skipping user creation.");
@@ -56,10 +62,14 @@ public class DataInitializerConfig {
 
             if (projectRepository.count() == 0) {
                 log.info("Creating sample projects...");
-                Project project1 = new Project();
-                project1.setName("p1");
+                Project projectSoftware = new Project();
+                projectSoftware.setName("Software");
+                Project projectHardware = new Project();
+                projectHardware.setName("Hardware");
+                Project projectInstallation = new Project();
+                projectInstallation.setName("Installation");
 
-                projectRepository.saveAll(List.of(project1));
+                projectRepository.saveAll(List.of(projectSoftware, projectHardware, projectInstallation));
                 log.info("Sample projects created; " + projectRepository.count());
             }
 
@@ -69,31 +79,32 @@ public class DataInitializerConfig {
                 // Benutzer aus der DB laden, um eine Referenz zu haben
                 User erika = userRepository.findByUsername("erika.muster").get();
                 User max = userRepository.findByUsername("max.power").get();
-                Project p1 = projectRepository.findByName("p1").get();
+                Project projectSoftware = projectRepository.findByName("Software").get();
+                Project projectHardware = projectRepository.findByName("Hardware").get();
 
                 Task task1 = new Task();
-                task1.setTitle("Spring Boot lernen");
-                task1.setDescription("Die Grundlagen von Spring Boot und Spring Data JPA verstehen.");
+                task1.setTitle("Login service unavailable");
+                task1.setDescription("Users cannot log in to the application. All access is blocked. Investigating authentication provider issue.");
                 task1.setDeadline(LocalDate.now().plusDays(1));
                 task1.setReportedBy(erika);
-                task1.setBelongsTo(p1);
+                task1.setBelongsTo(projectSoftware);
 
                 Task task2 = new Task();
-                task2.setTitle("API mit Security absichern");
-                task2.setDescription("Einfache Authentifizierung mit Usern aus der DB implementieren.");
+                task2.setTitle("Slow API response times for all GET requests");
+                task2.setDescription("Users are experiencing significant lag across the application. Response times have degraded from 200ms to >3s.");
                 task2.setDeadline(LocalDate.now().plusDays(2));
                 task2.setReportedBy(erika);
                 task2.setState(Constants.TASK_IN_PROGRESS);
                 task2.setUpdatedAt(LocalDateTime.now());
-                task2.setBelongsTo(p1);
+                task2.setBelongsTo(projectSoftware);
                 task2.setAssignedTo(max);
 
                 Task task3 = new Task();
-                task3.setTitle("Frontend entwerfen");
-                task3.setDescription("Ein Mockup für das React/Angular Frontend erstellen.");
+                task3.setTitle("Unit does not power on");
+                task3.setDescription("Device is completely unresponsive. No signs of life from display or LEDs, even when connected to a known-good power source.");
                 task3.setDeadline(LocalDate.now().plusDays(10));
                 task3.setReportedBy(max);
-                task3.setBelongsTo(p1);
+                task3.setBelongsTo(projectHardware);
                 task3.setAssignedTo(erika);
 
                 taskRepository.saveAll(List.of(task1, task2, task3));

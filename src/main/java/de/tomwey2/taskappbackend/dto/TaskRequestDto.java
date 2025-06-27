@@ -22,8 +22,5 @@ public record TaskRequestDto(
 
         @NotNull(message = "Deadline is required")
         @FutureOrPresent(message = "Deadline must be in the present or future")
-        LocalDate deadline,
-
-        @NotNull(message = "Project name is required")
-        String projectName
+        LocalDate deadline
 ) {}

@@ -25,12 +25,12 @@ public class TaskService {
     }
 
     // Die Methode braucht jetzt die userId
-    public Task createTask(TaskRequestDto taskRequestDto, Long userId) {
+    public Task createTask(TaskRequestDto taskRequestDto, Long projectId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        Project project = projectRepository.findByName(taskRequestDto.projectName())
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found with name: " + taskRequestDto.projectName()));
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
 
         // Manuelle Konvertierung vom DTO zur Entität
         Task newTask = new Task();
