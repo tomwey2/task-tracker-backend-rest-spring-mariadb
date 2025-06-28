@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,9 +15,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,17 +32,11 @@ import java.util.Arrays;
 // und sollte nicht mehr verwendet werden.
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-    // Den PasswordEncoder und einen In-Memory-Benutzer definieren
-    // Passwörter dürfen niemals im Klartext gespeichert werden, auch nicht für Testbenutzer im Speicher.
-    // Wir müssen sie verschlüsseln. Dafür definieren wir einen PasswordEncoder als Bean.
-    // Anschließend legen wir einen Testbenutzer an.
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        // BCrypt ist der De-facto-Standard zum Hashen von Passwörtern.
-        return new BCryptPasswordEncoder();
-    }
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final UserDetailsService userDetailsService; // Wir brauchen unseren JpaUserDetailsService
 
     /*
     Wenn wir die User aus der Datenbank holen ist diese Bean nicht mehr notwendig.
@@ -73,14 +71,18 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         // Regeln, um die OpenAPI-Dokumentation öffentlich zu machen
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                        // Jede GET-Anfrage, die auf /api/** passt, ist für jeden erlaubt.
-                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                        // Jede andere Anfrage an die API erfordert eine Authentifizierung.
+                        // Jede andere Anfrage, auch GET Pfade, an die API erfordert eine Authentifizierung.
                         .anyRequest().authenticated()
                 )
 
-                // 4. HTTP Basic Authentication aktivieren.
-                .httpBasic(Customizer.withDefaults());
+                // 4. das Session-Management als STATELESS konfigurieren
+                // Spring Security anweisen, keine HttpSessions mehr zu erstellen. Die App ist jetzt zustandslos.
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Unseren JwtAuthenticationFilter in die Filterkette einhängen, und zwar vor dem Standard-Filter zur Passwort-Authentifizierung.
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+                // HTTP Basic ist für eine token-basierte API nicht mehr nötig
+                // .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
@@ -92,7 +94,7 @@ public class SecurityConfig {
      * Dort kann man user/password-Credentials eingeben, und Swagger UI wird sie automatisch
      * für die Test-Anfragen an die geschützten Endpunkte verwenden.
      *
-     * @return
+     * @return OpenAPI Objekt
      */
     @Bean
     public OpenAPI customOpenAPI() {
@@ -137,4 +139,11 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // BCrypt ist der De-facto-Standard zum Hashen von Passwörtern.
+        return new BCryptPasswordEncoder();
+    }
+
 }
