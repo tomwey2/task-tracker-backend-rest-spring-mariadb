@@ -15,6 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 // Die moderne Art, Spring Security zu konfigurieren (seit Spring Boot 3), ist über eine Konfigurationsklasse,
 // die eine SecurityFilterChain-Bean definiert. Der alte WebSecurityConfigurerAdapter ist veraltet (deprecated)
@@ -58,7 +63,9 @@ public class SecurityConfig {
                 //    von Browsern mit Sessions genutzt werden, ist dies üblich.
                 .csrf(csrf -> csrf.disable())
 
-                // 2. Die Autorisierungsregeln für HTTP-Requests definieren.
+                // 2. Aktiviert die CORS-Konfiguration, die unten definiert wird
+                .cors(Customizer.withDefaults())
+                // 3. Die Autorisierungsregeln für HTTP-Requests definieren.
                 .authorizeHttpRequests(authz -> authz
                         // Regeln, um die OpenAPI-Dokumentation öffentlich zu machen
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
@@ -68,7 +75,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // 3. HTTP Basic Authentication aktivieren.
+                // 4. HTTP Basic Authentication aktivieren.
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -99,5 +106,24 @@ public class SecurityConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("basic")
                                 .description("HTTP Basic Authentication")));
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // Hier die URL deines React-Frontends eintragen
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // Erlaube alle gängigen HTTP-Methoden
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Erlaube alle Header
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // Erlaube das Senden von Credentials (wichtig für Security-Header und Cookies)
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Wende diese Konfiguration auf alle Pfade in deiner Anwendung an
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }
