@@ -4,11 +4,13 @@ import de.tomwey2.taskappbackend.MariaDbContainerTest;
 import de.tomwey2.taskappbackend.repository.ProjectRepository;
 import de.tomwey2.taskappbackend.repository.TaskRepository;
 import de.tomwey2.taskappbackend.repository.UserRepository;
+import de.tomwey2.taskappbackend.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -43,8 +45,11 @@ class TaskControllerIntegrationTest extends MariaDbContainerTest {
     private ProjectRepository projectRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtService jwtService;
 
     @Test
+    @WithMockUser(username = "erika.muster", roles = {"USER"})
     void whenGetTasks_thenReturnsOk() throws Exception {
         mockMvc.perform(get("/api/tasks")
                         .with(httpBasic(testUsername, testPassword)))
@@ -53,6 +58,7 @@ class TaskControllerIntegrationTest extends MariaDbContainerTest {
     }
 
     @Test
+    @WithMockUser(username = "erika.muster", roles = {"USER"})
     void whenGetTaskById_thenReturnsCorrectTask() throws Exception {
         // HINWEIS: Deine Tests selbst ändern sich NICHT!
         // Du musst sicherstellen, dass die Testdaten vorhanden sind (z.B. via @Sql).
