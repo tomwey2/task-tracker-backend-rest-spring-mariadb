@@ -11,13 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -72,6 +68,7 @@ class TaskControllerIntegrationTest extends MariaDbContainerTest {
     }
 
     @Test
+    @WithMockUser(username = "erika.muster", roles = {"USER"})
     void whenGetTasksId4711_thenReturnsNotFound() throws Exception {
         mockMvc.perform(get("/api/tasks/4711")
                         .with(httpBasic(testUsername, testPassword)))
