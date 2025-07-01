@@ -31,7 +31,7 @@ public class TaskModelAssembler implements RepresentationModelAssembler<Task, En
 
         // 3. Füge die Links hinzu, die auf den Daten der originalen 'task'-Entität basieren
         taskModel.add(linkTo(methodOn(TaskController.class).getTaskById(task.getId())).withSelfRel());
-        taskModel.add(linkTo(methodOn(TaskController.class).findTasks(null, null)).withRel("tasks"));
+        taskModel.add(linkTo(methodOn(TaskController.class).findTasks(null, null, null)).withRel("tasks"));
 
         // Optional: Erstelle einen Link auf den zugehörigen reportedBy User
         if (task.getReportedBy() != null) {

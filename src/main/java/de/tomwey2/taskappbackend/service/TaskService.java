@@ -61,8 +61,8 @@ public class TaskService {
         return false;
     }
 
-    public List<Task> searchTasks(Long projectId, Long assignedToUserId) {
-        return taskRepository.searchTasks(projectId, assignedToUserId);
+    public List<Task> searchTasks(Long projectId, Long assignedToUserId, String title) {
+        return taskRepository.searchTasks(projectId, assignedToUserId, title);
     }
 
 }

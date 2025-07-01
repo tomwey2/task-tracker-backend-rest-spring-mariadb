@@ -45,16 +45,18 @@ public class TaskController {
             @Parameter(description = "ID of the project to filter by")  // Swagger-UI
             @RequestParam(name = "projectId", required = false) Long projectId,
             @Parameter(description = "ID of the user to whom the tasks are assigned")
-            @RequestParam(name = "assignedToUserId", required = false) Long assignedToUserId) {
+            @RequestParam(name = "assignedToUserId", required = false) Long assignedToUserId,
+            @Parameter(description = "A substring of the title")
+            @RequestParam(name = "title", required = false) String title) {
 
         // Wenn beide Parameter null sind, funktioniert dies wie eine "findAll"-Abfrage.
         // Andernfalls wird gefiltert.
-        List<Task> tasks = taskService.searchTasks(projectId, assignedToUserId);
+        List<Task> tasks = taskService.searchTasks(projectId, assignedToUserId, title);
 
         // Der Assembler bietet auch eine Methode, um eine ganze Collection zu konvertieren.
         // Wir fügen noch den Self-Link für die Collection hinzu.
         return taskModelAssembler.toCollectionModel(tasks)
-                .add(linkTo(methodOn(TaskController.class).findTasks(projectId, assignedToUserId)).withSelfRel());
+                .add(linkTo(methodOn(TaskController.class).findTasks(projectId, assignedToUserId, title)).withSelfRel());
     }
 
     @Operation(

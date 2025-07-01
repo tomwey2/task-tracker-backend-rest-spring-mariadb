@@ -26,8 +26,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT t FROM Task t WHERE " +
             "(:projectId IS NULL OR t.belongsTo.id = :projectId) AND " +
-            "(:assignedToUserId IS NULL OR t.assignedTo.id = :assignedToUserId)")
+            "(:assignedToUserId IS NULL OR t.assignedTo.id = :assignedToUserId) AND " +
+            "(:title IS NULL OR LOWER(t.title) LIKE LOWER(CONCAT('%', :title, '%')))")
     List<Task> searchTasks(@Param("projectId") Long projectId,
-                           @Param("assignedToUserId") Long assignedToUserId);
-
+                           @Param("assignedToUserId") Long assignedToUserId,
+                           @Param("title") String title);
 }
