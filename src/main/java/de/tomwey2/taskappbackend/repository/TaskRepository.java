@@ -24,6 +24,15 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t WHERE t.assignedTo = :user AND t.state = :state")
     List<Task> findTasksByAssigneeAndStatus(@Param("user") User user, @Param("state") String state);
 
+    /**
+     * Sucht nach Tasks mit optionalen Filtern für Projekt, zugewiesenen Benutzer und Titel.
+     * Die Titelsuche ist eine case-insensitive Substring-Suche.
+     *
+     * @param projectId ID des Projekts (optional)
+     * @param assignedToUserId ID des zugewiesenen Benutzers (optional)
+     * @param title Ein Teil des Titels, nach dem gesucht werden soll (optional)
+     * @return Eine Liste von passenden Tasks.
+     */
     @Query("SELECT t FROM Task t WHERE " +
             "(:projectId IS NULL OR t.belongsTo.id = :projectId) AND " +
             "(:assignedToUserId IS NULL OR t.assignedTo.id = :assignedToUserId) AND " +

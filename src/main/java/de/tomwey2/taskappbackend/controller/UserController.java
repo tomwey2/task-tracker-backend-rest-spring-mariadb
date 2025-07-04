@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -42,8 +43,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<UserResponseDto>> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(userModelAssembler::toModel)
+        Optional<User> user = userService.getUserById(id);
+        return user.map(userModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

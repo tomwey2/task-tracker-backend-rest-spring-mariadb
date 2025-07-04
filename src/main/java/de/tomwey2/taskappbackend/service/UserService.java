@@ -1,6 +1,7 @@
 package de.tomwey2.taskappbackend.service;
 
 import de.tomwey2.taskappbackend.dto.UserRequestDto;
+import de.tomwey2.taskappbackend.exception.ResourceNotFoundException;
 import de.tomwey2.taskappbackend.model.User;
 import de.tomwey2.taskappbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,4 +34,9 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    // In service/UserService.java
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
+    }
 }
