@@ -63,11 +63,11 @@ public class ProjectController {
     }
 
     @Operation(
-            summary = "Get a project with a given ID",
-            description = "Retrieves a project with a given task ID.")
+            summary = "Get a project with a given id",
+            description = "Retrieves a project with a given task id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Project with ID Not Found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "Project with id Not Found", content = @Content)
     })
     @GetMapping("/projects/{id}")
     public ResponseEntity<EntityModel<ProjectResponseDto>> getProjectById(@PathVariable Long id) {

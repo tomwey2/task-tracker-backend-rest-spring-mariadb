@@ -59,11 +59,11 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Get a user with a given ID",
-            description = "Retrieves a user with a given task ID.")
+            summary = "Get a user with a given id",
+            description = "Retrieves a user with a given task id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "User with ID Not Found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "User with id Not Found", content = @Content)
     })
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<UserResponseDto>> getUserById(@PathVariable Long id) {

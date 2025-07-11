@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Authentication", description = "Operationen für Login/Authentifizierung")
+@Tag(name = "Authentication", description = "Operationen that affect the user authentication")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -51,7 +51,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    @Operation(summary = "Gibt den aktuell eingeloggten Benutzer zurück")
+    @Operation(summary = "Returns the current logged in user")
     public EntityModel<UserResponseDto> getCurrentUser(Authentication authentication) {
         // Der 'Authentication'-Parameter wird von Spring Security automatisch bereitgestellt
         String username = authentication.getName();

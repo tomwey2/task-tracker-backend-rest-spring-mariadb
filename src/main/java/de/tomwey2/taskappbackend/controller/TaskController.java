@@ -34,7 +34,7 @@ public class TaskController {
 
     @Operation(
             summary = "Search for tasks",
-            description = "Retrieves a list of tasks, optionally filtered by project ID and assigned user." +
+            description = "Retrieves a list of tasks, optionally filtered by project id and assigned user." +
                     "If no parameter is specified, all tasks are returned.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -60,15 +60,15 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Get a task with a given ID",
-            description = "Retrieves a task with a given task ID.")
+            summary = "Get a task with a given id",
+            description = "Retrieves a task with a given task id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Task with ID Not Found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "Task with id Not Found", content = @Content)
     })
     @GetMapping("/tasks/{id}")
     public ResponseEntity<EntityModel<TaskResponseDto>> getTaskById(
-            @Parameter(description = "ID of the task")  // Swagger-UI
+            @Parameter(description = "Id of the task")  // Swagger-UI
             @PathVariable Long id) {
         return taskService.getTaskById(id)
                 .map(taskModelAssembler::toModel)
@@ -78,16 +78,16 @@ public class TaskController {
 
     @Operation(
             summary = "Create a new task for a given project",
-            description = "Creates a new task. The user ID is the reporter of the task")
+            description = "Creates a new task. The user id is the reporter of the task.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created"),
-            @ApiResponse(responseCode = "404", description = "User with ID Not Found"),
+            @ApiResponse(responseCode = "404", description = "User with id Not Found"),
     })
     @PostMapping("/projects/{projectId}/users/{userId}/tasks")
     public ResponseEntity<EntityModel<TaskResponseDto>> createTask(
-            @Parameter(description = "ID of the project")  // Swagger-UI
+            @Parameter(description = "id of the project")  // Swagger-UI
             @PathVariable Long projectId,
-            @Parameter(description = "ID of the user")  // Swagger-UI
+            @Parameter(description = "id of the user")  // Swagger-UI
             @PathVariable Long userId,
             @Valid @RequestBody TaskRequestDto taskRequest) {
 
@@ -96,15 +96,15 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Update the task with a given ID",
-            description = "Updates the task with a given ID.")
+            summary = "Update the task with a given id",
+            description = "Updates the task with a given id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Task with ID Not Found"),
+            @ApiResponse(responseCode = "404", description = "Task with id Not Found"),
     })
     @PutMapping("/tasks/{id}")
     public ResponseEntity<EntityModel<TaskResponseDto>> updateTask(
-            @Parameter(description = "ID of the task")  // Swagger-UI
+            @Parameter(description = "id of the task")  // Swagger-UI
             @PathVariable Long id,
             @RequestBody TaskRequestDto taskRequest) {
         return taskService.updateTask(id, taskRequest)
@@ -115,15 +115,15 @@ public class TaskController {
 
     // DELETE /api/tasks/{id} -> Einen Task löschen
     @Operation(
-            summary = "Delete the task with a given ID",
-            description = "Deletes the task with a given ID.")
+            summary = "Delete the task with a given id",
+            description = "Deletes the task with a given id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
-            @ApiResponse(responseCode = "404", description = "Task with ID Not Found"),
+            @ApiResponse(responseCode = "404", description = "Task with id Not Found"),
     })
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<Void> deleteTask(
-            @Parameter(description = "ID of the task")  // Swagger-UI
+            @Parameter(description = "Id of the task")  // Swagger-UI
             @PathVariable Long id) {
         if (taskService.deleteTask(id)) {
             return ResponseEntity.noContent().build(); // Status 204 No Content

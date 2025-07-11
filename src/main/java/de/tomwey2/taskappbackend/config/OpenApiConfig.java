@@ -22,9 +22,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth"; // Geändert zu Bearer für JWT
         return new OpenAPI()
-                .info(new Info().title("TaskApp API")
+                .info(new Info().title("TaskTracker API")
                         .version("1.0")
-                        .description("API für die TaskApp-Anwendung.")
+                        .description("API of the TaskTracker Application.")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
