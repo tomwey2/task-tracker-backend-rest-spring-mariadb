@@ -5,7 +5,7 @@ pipeline {
      }
      environment {
         GHCR_CREDENTIALS = credentials("tomwey2-ghcr")
-        IMAGE_VERSION = '0.1.2-SNAPSHOT'
+        IMAGE_VERSION = '0.2.0-SNAPSHOT'
      }
      stages {
         stage("initialize") {
