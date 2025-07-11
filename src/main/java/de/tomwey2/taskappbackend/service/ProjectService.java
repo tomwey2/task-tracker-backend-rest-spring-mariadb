@@ -21,8 +21,8 @@ public class ProjectService {
         return projectRepository.save(newProject);
     }
 
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<Project> searchProjects(String name) {
+        return projectRepository.searchProjects(name);
     }
 
     public Optional<Project> getProjectById(Long id) {
