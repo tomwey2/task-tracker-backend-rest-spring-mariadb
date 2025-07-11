@@ -87,33 +87,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * Globale Informationen und Security konfigurieren
-     * Globale Informationen, wie den Titel der API, die Version und die Security-Konfigurationen.
-     * Auf der Swagger UI oben rechts befindet sich jetzt ein "Authorize"-Button.
-     * Dort kann man user/password-Credentials eingeben, und Swagger UI wird sie automatisch
-     * für die Test-Anfragen an die geschützten Endpunkte verwenden.
-     *
-     * @return OpenAPI Objekt
-     */
-    @Bean
-    public OpenAPI customOpenAPI() {
-        final String securitySchemeName = "basicAuth";
-        return new OpenAPI()
-                .info(new Info().title("Task Tracker Backend API")
-                        .version("1.0")
-                        .description("API für das Task Tracker Backend.")
-                        .license(new License().name("Apache 2.0").url("https://github.com/tomwey2/task-tracker-backend-rest-spring-mariadb")))
-                // Füge die Security-Definition für Basic Auth hinzu
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
-                .components(new Components()
-                        .addSecuritySchemes(securitySchemeName, new SecurityScheme()
-                                .name(securitySchemeName)
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("basic")
-                                .description("HTTP Basic Authentication")));
-    }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
