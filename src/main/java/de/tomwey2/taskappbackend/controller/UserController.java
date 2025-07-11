@@ -5,6 +5,11 @@ import de.tomwey2.taskappbackend.dto.UserRequestDto;
 import de.tomwey2.taskappbackend.model.User;
 import de.tomwey2.taskappbackend.dto.UserResponseDto;
 import de.tomwey2.taskappbackend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -21,26 +26,45 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Tag(name = "Users", description = "Operations that affect users")
 public class UserController {
 
     private final UserService userService;
     private final UserModelAssembler userModelAssembler;
 
+    @Operation(
+            summary = "Create a new user",
+            description = "Creates a new user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "404", description = "User with this username already exists."),
+    })
     @PostMapping
     public ResponseEntity<EntityModel<UserResponseDto>> createUser(@RequestBody UserRequestDto userRequestDto) {
         User user = userService.createUser(userRequestDto);
         return new ResponseEntity<>(userModelAssembler.toModel(user), HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @Operation(
+            summary = "Get all users",
+            description = "Retrieves a list of all user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+    })    @GetMapping
     public CollectionModel<EntityModel<UserResponseDto>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        // Der Assembler bietet auch eine Methode, um eine ganze Collection zu konvertieren.
-        // Wir fügen noch den Self-Link für die Collection hinzu.
         return userModelAssembler.toCollectionModel(users)
                 .add(linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
     }
 
+    @Operation(
+            summary = "Get a user with a given ID",
+            description = "Retrieves a user with a given task ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "User with ID Not Found", content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<UserResponseDto>> getUserById(@PathVariable Long id) {
         Optional<User> user = userService.getUserById(id);

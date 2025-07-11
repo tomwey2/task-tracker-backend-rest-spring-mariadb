@@ -16,7 +16,7 @@ public record UserRequestDto(
         @Size(min = 3, max = 100, message = "Password must be between 3 and 100 characters")
         String password,
 
-        @NotBlank(message = "Project name cannot be blank")
+        @NotBlank(message = "Role cannot be blank")
         String role
 
 ) {
