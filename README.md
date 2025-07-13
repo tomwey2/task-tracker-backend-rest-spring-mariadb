@@ -30,7 +30,7 @@ be reported by exactly one user. The user that reports the task can assign
 other users to the task. One task can be assigned to zero or more 
 users. A user can be member of zero or more projects.  
  
-![Data model](datamodel.png)
+![Data model](docs/datamodel.png)
 
 
 ### REST API
@@ -74,5 +74,5 @@ authorization header as bearer token.
 
 The following picture shows this process graphically.
 
-![Communication](communication.png)
+![Communication](docs/communication.png)
 
