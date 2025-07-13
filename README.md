@@ -1,6 +1,6 @@
 # Task Tracker Backend
 This project implements a REST API server that manages tasks for a task's tracker system.
-The tasks are stored in a mongodb database that runs in AWS. 
+The tasks are stored in a mariadb database. 
 
 ## Usage
 Build the application with gradle:
@@ -10,12 +10,6 @@ Build the application with gradle:
 Run the application:
 
     ./mvnw bootrun
-
-The REST API server runs at the port 5000.
-
-> Note: add the file 'mongodb.properties' with the the MongoDb connection
-> string. This string contains username and password of the db user and 
-> should be not published in an open repository.
 
 ## Definitions
 
@@ -34,19 +28,33 @@ users. A user can be member of zero or more projects.
 
 
 ### REST API
-#### Endpoints for user management
-| Method | URL        | Action                                            |
-|--------|------------|---------------------------------------------------|
-| POST   | /login     | sign in with email and password                   |
-| POST   | /register  | register new user with name, email and password   |
-| GET    | /api/users | get the list of registered users (only for admin) |
+#### Endpoints for authentication
+The following table shows the operations that affect the user authentication.
 
-After /register the user must sign in via the /login request. 
-The response of the /login request contains the user details and two tokens: an access token for 
-authorization the access to the resources, and a refresh token to renew the access token if it is expired. 
+| Method | URL                | Action                                                 |
+|--------|--------------------|--------------------------------------------------------|
+| POST   | /api/auth/login    | sign in with email and password                        |
+| GET    | /api/auth/me       | returns the current logged in user                     |
+| POST   | /api/auth/register | register new user with name, email and password (TODO) |
+
+After /register the user must sign in via the /login request.
+The response of the /login request contains the user details and two tokens: an access token for
+authorization the access to the resources, and a refresh token to renew the access token if it is expired.
 The token must be sent in the authorization header as Bearer Token.
 
+#### Endpoints for user management
+The following table shows the operations that affect the user management. These operations 
+can only perform by admins.
+
+| Method | URL                | Action                           |
+|--------|--------------------|----------------------------------|
+| GET    | /api/users         | get the list of registered users |
+| POST   | /api/users         | create a new user                |
+| GET    | /api/users         | get the list of registered users |
+
+
 #### Endpoints for tasks management
+The following table shows the operations that affect the task management.
 In order to use the tasks endpoints, the user must be authenticated before.
 
 | Method | URL                        | Action                                      |
@@ -59,8 +67,7 @@ In order to use the tasks endpoints, the user must be authenticated before.
 | GET    | /api/tasks/{id}/reportedby | get the user that has reported the task     |
 | GET    | /api/tasks/{id}/assignees  | get the users that are assigned to the task |
 
-Details of the REST api are scripted at:
-[Definition of REST API tasks](doc/readme-rest-api-tasks.md)
+Details of the REST api are described with Swagger: http://localhost:8080/swagger-ui/index.html
 
 ## Communication
 The communication protocol between client and server is HTTP. 
