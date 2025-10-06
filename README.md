@@ -2,14 +2,49 @@
 This project implements a REST API server that manages tasks for a task's tracker system.
 The tasks are stored in a mariadb database. 
 
-## Usage
-Build the application with gradle:
+### Running with Docker
 
-    ./mvnw clean build
+This setup runs the application and a custom MariaDB database in separate Docker containers.
 
-Run the application:
+**1. Create a Docker Network**
 
-    ./mvnw bootrun
+First, create a dedicated network for the containers to communicate:
+
+    docker network create task-app-net
+
+**2. Build and Start the Custom MariaDB Container**
+
+We now use a custom Dockerfile (`Dockerfile.mariadb`) and an initialization script (`db/init.sql`) to create the database and user explicitly.
+
+First, build the custom MariaDB image:
+
+    docker build -t custom-mariadb -f Dockerfile.mariadb .
+
+Now, run the custom database container. It still requires a root password for its initial setup.
+
+    docker run -d \
+      --name mariadb \
+      --network task-app-net \
+      -p 3306:3306 \
+      -e MARIADB_ROOT_PASSWORD=secret \
+      custom-mariadb
+
+**3. Build and Run the Application Container**
+
+Build the application's Docker image:
+
+    docker build -t task-tracker-backend .
+
+Now, run the application container. It connects to the database using the credentials we defined in the `init.sql` script (`user` and `password`).
+
+    docker run --rm \
+      --name task-tracker-app \
+      --network task-app-net \
+      -p 8080:8080 \
+      -e MARIADB_USER=user \
+      -e MARIADB_PASSWORD=mysecretpw \
+      -e APP_JWT_SECRET=6d6319eb8e676a989ee3932b5cc9e916e2125fdc97a3d2db500eab6d63822812 \
+      task-tracker-backend
 
 ## Definitions
 
@@ -82,4 +117,3 @@ authorization header as bearer token.
 The following picture shows this process graphically.
 
 ![Communication](docs/communication.png)
-
