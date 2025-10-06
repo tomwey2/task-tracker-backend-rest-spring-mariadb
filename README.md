@@ -1,64 +1,46 @@
 # Task Tracker Backend
 This project implements a REST API server that manages tasks for a task's tracker system.
-The tasks are stored in a mariadb database. 
+The tasks are stored in a mariadb database.
 
-### Running with Docker
+### Usage with Docker Compose (Recommended)
 
-This setup runs the application and a custom MariaDB database in separate Docker containers.
+This is the recommended way to run the application and its database for development. It uses Docker Compose to manage all services, networks, and configurations automatically.
 
-**1. Create a Docker Network**
+**1. Build the Application**
 
-First, create a dedicated network for the containers to communicate:
+First, package the Spring Boot application into a `.jar` file that the Docker image can use:
 
-    docker network create task-app-net
+    ./mvnw clean package
 
-**2. Build and Start the Custom MariaDB Container**
+**2. Run with Docker Compose**
 
-We now use a custom Dockerfile (`Dockerfile.mariadb`) and an initialization script (`db/init.sql`) to create the database and user explicitly.
+This single command will build the necessary Docker images, create the network, and start both the database and the application containers in the correct order.
 
-First, build the custom MariaDB image:
+    docker compose up --build
 
-    docker build -t custom-mariadb -f Dockerfile.mariadb .
+Your application will be available at `http://localhost:8080`.
 
-Now, run the custom database container. It still requires a root password for its initial setup.
+The Swagger API information is available a`http://localhost:8080/swagger-ui/index.html`
 
-    docker run -d \
-      --name mariadb \
-      --network task-app-net \
-      -p 3306:3306 \
-      -e MARIADB_ROOT_PASSWORD=secret \
-      custom-mariadb
+**Stopping the Application**
 
-**3. Build and Run the Application Container**
+To stop all services and remove the containers, simply run:
 
-Build the application's Docker image:
-
-    docker build -t task-tracker-backend .
-
-Now, run the application container. It connects to the database using the credentials we defined in the `init.sql` script (`user` and `password`).
-
-    docker run --rm \
-      --name task-tracker-app \
-      --network task-app-net \
-      -p 8080:8080 \
-      -e MARIADB_USER=user \
-      -e MARIADB_PASSWORD=mysecretpw \
-      -e APP_JWT_SECRET=6d6319eb8e676a989ee3932b5cc9e916e2125fdc97a3d2db500eab6d63822812 \
-      task-tracker-backend
+    docker compose down
 
 ## Definitions
 
 ### Data definition
 #### Data model
-The data model consists of three main entities: tasks, users and projects. 
-Each project consists of zero or more tasks. Each task can be assigned only to 
-one project. 
+The data model consists of three main entities: tasks, users and projects.
+Each project consists of zero or more tasks. Each task can be assigned only to
+one project.
 
-The user that creates a task is its reporter. A task can only 
+The user that creates a task is its reporter. A task can only
 be reported by exactly one user. The user that reports the task can assign
-other users to the task. One task can be assigned to zero or more 
-users. A user can be member of zero or more projects.  
- 
+other users to the task. One task can be assigned to zero or more
+users. A user can be member of zero or more projects.
+
 ![Data model](docs/datamodel.png)
 
 
@@ -78,7 +60,7 @@ authorization the access to the resources, and a refresh token to renew the acce
 The token must be sent in the authorization header as Bearer Token.
 
 #### Endpoints for user management
-The following table shows the operations that affect the user management. These operations 
+The following table shows the operations that affect the user management. These operations
 can only perform by admins.
 
 | Method | URL                | Action                           |
@@ -105,13 +87,13 @@ In order to use the tasks endpoints, the user must be authenticated before.
 Details of the REST api are described with Swagger: http://localhost:8080/swagger-ui/index.html
 
 ## Communication
-The communication protocol between client and server is HTTP. 
+The communication protocol between client and server is HTTP.
 It provides operations (HTTP methods) such as GET, POST, PUT, and DELETE.
 The user must be registered.
 Before the user can access to a resource, e.g. tasks, the user must be login.
 if the server can authenticate the user, it responds with an access token and a
-refresh token (both JSON web token). 
-When the client requests a resource, he must send the access token in the 
+refresh token (both JSON web token).
+When the client requests a resource, he must send the access token in the
 authorization header as bearer token.
 
 The following picture shows this process graphically.
