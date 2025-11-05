@@ -13,6 +13,7 @@ public class Task extends Auditable {
 
     private String title;
     private String description;
+    private String comment; // TODO: list of comments
     private String state = Constants.TASK_OPEN;
     private LocalDate deadline;
 

@@ -13,7 +13,7 @@
 	</parent>
 	<groupId>de.tomwey2</groupId>
 	<artifactId>taskapp-backend</artifactId>
-	<version>0.2.1-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<name>taskapp-backend</name>
 	<description>Task tracker backend with REST api, Spring Boot and MariaDB</description>
 	<url/>

@@ -12,6 +12,7 @@ public record TaskResponseDto(
         Long id,
         String title,
         String description,
+        String comment,
         String state,
         LocalDate deadline,
         LocalDateTime createdAt,
