@@ -1,15 +1,9 @@
 package de.tomwey2.taskappbackend.config;
 
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,8 +19,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-
 // Die moderne Art, Spring Security zu konfigurieren (seit Spring Boot 3), ist über eine Konfigurationsklasse,
 // die eine SecurityFilterChain-Bean definiert. Der alte WebSecurityConfigurerAdapter ist veraltet (deprecated)
 // und sollte nicht mehr verwendet werden.
@@ -36,7 +28,6 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserDetailsService userDetailsService; // Wir brauchen unseren JpaUserDetailsService
 
     /*
     Wenn wir die User aus der Datenbank holen ist diese Bean nicht mehr notwendig.
@@ -59,30 +50,43 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. CSRF-Schutz deaktivieren. Für zustandslose REST-APIs, die nicht
-                //    von Browsern mit Sessions genutzt werden, ist dies üblich.
-                .csrf(csrf -> csrf.disable())
+            // 1. CSRF-Schutz deaktivieren. Für zustandslose REST-APIs, die nicht
+            //    von Browsern mit Sessions genutzt werden, ist dies üblich.
+            .csrf(csrf -> csrf.disable())
+            // 2. Aktiviert die CORS-Konfiguration, die unten definiert wird
+            .cors(Customizer.withDefaults())
+            // 3. Die Autorisierungsregeln für HTTP-Requests definieren.
+            .authorizeHttpRequests(authz ->
+                authz
+                    // Erlaube Zugriff auf alle Auth-Endpunkte für Login uns Register
+                    .requestMatchers("/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/api/users/**")
+                    .permitAll()
+                    // Regeln, um die OpenAPI-Dokumentation öffentlich zu machen
+                    .requestMatchers(
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**"
+                    )
+                    .permitAll()
+                    // Jede andere Anfrage, auch GET Pfade, an die API erfordert eine Authentifizierung.
+                    .anyRequest()
+                    .authenticated()
+            )
+            // 4. das Session-Management als STATELESS konfigurieren
+            // Spring Security anweisen, keine HttpSessions mehr zu erstellen. Die App ist jetzt zustandslos.
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            // Unseren JwtAuthenticationFilter in die Filterkette einhängen, und zwar vor dem Standard-Filter zur Passwort-Authentifizierung.
+            .addFilterBefore(
+                jwtAuthFilter,
+                UsernamePasswordAuthenticationFilter.class
+            );
 
-                // 2. Aktiviert die CORS-Konfiguration, die unten definiert wird
-                .cors(Customizer.withDefaults())
-                // 3. Die Autorisierungsregeln für HTTP-Requests definieren.
-                .authorizeHttpRequests(authz -> authz
-                        // Erlaube Zugriff auf alle Auth-Endpunkte für Login uns Register
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // Regeln, um die OpenAPI-Dokumentation öffentlich zu machen
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                        // Jede andere Anfrage, auch GET Pfade, an die API erfordert eine Authentifizierung.
-                        .anyRequest().authenticated()
-                )
-
-                // 4. das Session-Management als STATELESS konfigurieren
-                // Spring Security anweisen, keine HttpSessions mehr zu erstellen. Die App ist jetzt zustandslos.
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Unseren JwtAuthenticationFilter in die Filterkette einhängen, und zwar vor dem Standard-Filter zur Passwort-Authentifizierung.
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-                // HTTP Basic ist für eine token-basierte API nicht mehr nötig
-                // .httpBasic(Customizer.withDefaults());
+        // HTTP Basic ist für eine token-basierte API nicht mehr nötig
+        // .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
@@ -93,13 +97,16 @@ public class SecurityConfig {
         // Hier die URL deines React-Frontends eintragen
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         // Erlaube alle gängigen HTTP-Methoden
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(
+            Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        );
         // Erlaube alle Header
         configuration.setAllowedHeaders(Arrays.asList("*"));
         // Erlaube das Senden von Credentials (wichtig für Security-Header und Cookies)
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
         // Wende diese Konfiguration auf alle Pfade in deiner Anwendung an
         source.registerCorsConfiguration("/**", configuration);
 
@@ -109,7 +116,9 @@ public class SecurityConfig {
     // Wir müssen Spring Securitys zentralen AuthenticationManager als Bean verfügbar machen,
     // damit wir ihn in unserem Controller verwenden können.
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(
+        AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -118,5 +127,4 @@ public class SecurityConfig {
         // BCrypt ist der De-facto-Standard zum Hashen von Passwörtern.
         return new BCryptPasswordEncoder();
     }
-
 }
