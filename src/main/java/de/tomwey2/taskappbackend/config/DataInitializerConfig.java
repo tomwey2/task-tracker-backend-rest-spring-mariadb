@@ -85,6 +85,7 @@ public class DataInitializerConfig {
                 Task task1 = new Task();
                 task1.setTitle("Login service unavailable");
                 task1.setDescription("Users cannot log in to the application. All access is blocked. Investigating authentication provider issue.");
+                task1.setComment("");
                 task1.setDeadline(LocalDate.now().plusDays(1));
                 task1.setReportedBy(erika);
                 task1.setBelongsTo(projectSoftware);
@@ -92,6 +93,7 @@ public class DataInitializerConfig {
                 Task task2 = new Task();
                 task2.setTitle("Slow API response times for all GET requests");
                 task2.setDescription("Users are experiencing significant lag across the application. Response times have degraded from 200ms to >3s.");
+                task2.setComment("");
                 task2.setDeadline(LocalDate.now().plusDays(2));
                 task2.setReportedBy(erika);
                 task2.setState(Constants.TASK_IN_PROGRESS);
@@ -102,6 +104,7 @@ public class DataInitializerConfig {
                 Task task3 = new Task();
                 task3.setTitle("Unit does not power on");
                 task3.setDescription("Device is completely unresponsive. No signs of life from display or LEDs, even when connected to a known-good power source.");
+                task3.setComment("");
                 task3.setDeadline(LocalDate.now().plusDays(10));
                 task3.setReportedBy(max);
                 task3.setBelongsTo(projectHardware);

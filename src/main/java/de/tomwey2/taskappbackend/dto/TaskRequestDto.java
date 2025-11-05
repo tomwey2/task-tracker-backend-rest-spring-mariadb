@@ -17,6 +17,9 @@ public record TaskRequestDto(
         @Size(max = 1000, message = "Description can be max 1000 characters")
         String description,
 
+        @Size(max = 1000, message = "Comment can be max 1000 characters")
+        String comment,
+
         @NotNull(message = "State is required")
         String state,
 
