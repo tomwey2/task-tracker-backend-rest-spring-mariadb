@@ -43,7 +43,6 @@ public class TaskService {
         Task newTask = new Task();
         newTask.setTitle(taskRequestDto.title());
         newTask.setDescription(taskRequestDto.description());
-        newTask.setComment(taskRequestDto.comment());
         newTask.setDeadline(taskRequestDto.deadline());
         newTask.setReportedBy(reporter);
         newTask.setBelongsTo(project);
@@ -64,7 +63,6 @@ public class TaskService {
                     }
                     existingTask.setTitle(updatedTask.title());
                     existingTask.setDescription(updatedTask.description());
-                    existingTask.setComment(updatedTask.comment());
                     existingTask.setState(updatedTask.state());
                     existingTask.setDeadline(updatedTask.deadline());
                     if (assignedUser != null) {

@@ -1,10 +1,13 @@
 package de.tomwey2.taskappbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.tomwey2.taskappbackend.Constants;
 import jakarta.persistence.*;
 import lombok.Data; // Lombok für weniger Code
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data // Erzeugt automatisch Getter, Setter, toString(), equals(), hashCode()
 @Entity // Sagt JPA, dass dies eine Datenbank-Tabelle ist
@@ -13,8 +16,7 @@ public class Task extends Auditable {
 
     private String title;
     private String description;
-    private String comment; // TODO: list of comments
-    private String state = Constants.TASK_OPEN;
+    private String state = Constants.TASK_CREATED;
     private LocalDate deadline;
 
     @ManyToOne( // Definiert, dass viele Tasks (Many) zu einem User (One) gehören.
@@ -40,4 +42,17 @@ public class Task extends Auditable {
             nullable = false
     )
     private Project belongsTo;
+
+    /**
+     * Eine Sammlung von Kommentaren, die zu diesem Task gehören.
+     * Dies ist die "inverse" (nicht-besitzende) Seite der Beziehung.
+     */
+    @OneToMany(
+            mappedBy = "task",          // "task" ist der Feldname in der Comment-Klasse
+            cascade = CascadeType.ALL,  // Wenn ein Task gelöscht wird, lösche alle Kommentare
+            orphanRemoval = true,       // Wenn ein Kommentar aus dieser Liste entfernt wird, lösche ihn
+            fetch = FetchType.LAZY      // Kommentare nicht standardmäßig mitladen
+    )
+    @JsonIgnore // Kommentare sollen über einen eigenen Endpunkt geladen werden
+    private Set<Comment> comments = new HashSet<>();
 }

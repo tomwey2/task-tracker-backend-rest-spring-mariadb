@@ -20,7 +20,6 @@ public class TaskModelAssembler implements RepresentationModelAssembler<Task, En
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),
-                task.getComment(),
                 task.getState(),
                 task.getDeadline(),
                 task.getCreatedAt(),
