@@ -1,16 +1,17 @@
 package de.tomwey2.taskappbackend.controller;
 
-import de.tomwey2.taskappbackend.dto.ProjectModelAssembler;
-import de.tomwey2.taskappbackend.dto.ProjectRequestDto;
-import de.tomwey2.taskappbackend.dto.ProjectResponseDto;
+import de.tomwey2.taskappbackend.dto.*;
 import de.tomwey2.taskappbackend.model.Project;
+import de.tomwey2.taskappbackend.model.Task;
 import de.tomwey2.taskappbackend.service.ProjectService;
+import de.tomwey2.taskappbackend.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -31,6 +32,8 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final ProjectModelAssembler projectModelAssembler;
+    private final TaskService taskService;
+    private final TaskModelAssembler taskModelAssembler;
 
     @Operation(
             summary = "Create a new project",
@@ -70,10 +73,56 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project with id Not Found", content = @Content)
     })
     @GetMapping("/projects/{id}")
-    public ResponseEntity<EntityModel<ProjectResponseDto>> getProjectById(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<ProjectResponseDto>> getProjectById(
+            @Parameter(description = "ID of the project")  // Swagger-UI
+            @PathVariable Long id) {
         return projectService.getProjectById(id)
                 .map(projectModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @Operation(
+            summary = "Get all tasks for a specific project",
+            description = "Retrieves a list of tasks for a specific project.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Project with id Not Found", content = @Content)
+    })
+    @GetMapping("/projects/{projectId}/tasks")
+    public CollectionModel<EntityModel<TaskResponseDto>> findTasksOfProject(
+            @Parameter(description = "ID of the project")  // Swagger-UI
+            @PathVariable(name = "projectId") Long projectId,
+            @Parameter(description = "ID of the user to whom the tasks are assigned")
+            @RequestParam(name = "assignedToUserId", required = false) Long assignedToUserId,
+            @Parameter(description = "A substring of the title")
+            @RequestParam(name = "title", required = false) String title) {
+
+        // Wenn beide Parameter null sind, funktioniert dies wie eine "findAll"-Abfrage.
+        // Andernfalls wird gefiltert.
+        List<Task> tasks = taskService.searchTasks(projectId, assignedToUserId, title);
+
+        // Der Assembler bietet auch eine Methode, um eine ganze Collection zu konvertieren.
+        // Wir fügen noch den Self-Link für die Collection hinzu.
+        return taskModelAssembler.toCollectionModel(tasks)
+                .add(linkTo(methodOn(TaskController.class).findTasks(projectId, assignedToUserId, title)).withSelfRel());
+    }
+
+    @Operation(
+            summary = "Create a new task for a given project",
+            description = "Creates a new task. The user id is the reporter of the task.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "404", description = "User with id Not Found"),
+    })
+    @PostMapping("/projects/{projectId}/tasks")
+    public ResponseEntity<EntityModel<TaskResponseDto>> createTask(
+            @Parameter(description = "id of the project")  // Swagger-UI
+            @PathVariable Long projectId,
+            @Valid @RequestBody TaskRequestDto taskRequest) {
+
+        Task task = taskService.createTask(taskRequest, projectId);
+        return new ResponseEntity<>(taskModelAssembler.toModel(task), HttpStatus.CREATED);
+    }
+
 }

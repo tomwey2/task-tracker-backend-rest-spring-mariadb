@@ -1,6 +1,6 @@
 package de.tomwey2.taskappbackend.dto;
 
-import de.tomwey2.taskappbackend.controller.ProjectController;
+import de.tomwey2.taskappbackend.controller.UserController;
 import de.tomwey2.taskappbackend.model.User;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -28,7 +28,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, En
         EntityModel<UserResponseDto> userModel = EntityModel.of(userDto);
 
         // 3. Füge die Links hinzu, die auf den Daten der originalen 'user'-Entität basieren
-        userModel.add(linkTo(methodOn(ProjectController.class).getProjectById(user.getId())).withSelfRel());
+        userModel.add(linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel());
         return userModel;
     }
 }

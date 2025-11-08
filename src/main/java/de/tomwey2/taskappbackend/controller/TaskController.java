@@ -11,11 +11,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,25 +72,6 @@ public class TaskController {
                 .map(taskModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    @Operation(
-            summary = "Create a new task for a given project",
-            description = "Creates a new task. The user id is the reporter of the task.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created"),
-            @ApiResponse(responseCode = "404", description = "User with id Not Found"),
-    })
-    @PostMapping("/projects/{projectId}/users/{userId}/tasks")
-    public ResponseEntity<EntityModel<TaskResponseDto>> createTask(
-            @Parameter(description = "id of the project")  // Swagger-UI
-            @PathVariable Long projectId,
-            @Parameter(description = "id of the user")  // Swagger-UI
-            @PathVariable Long userId,
-            @Valid @RequestBody TaskRequestDto taskRequest) {
-
-        Task task = taskService.createTask(taskRequest, projectId, userId);
-        return new ResponseEntity<>(taskModelAssembler.toModel(task), HttpStatus.CREATED);
     }
 
     @Operation(

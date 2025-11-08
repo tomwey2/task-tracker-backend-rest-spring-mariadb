@@ -19,15 +19,22 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository; // UserRepository injecten
     private final ProjectRepository projectRepository;
+    private final AuthService authService;
 
     public Optional<Task> getTaskById(Long id) {
         return taskRepository.findById(id);
     }
 
     // Die Methode braucht jetzt die userId
-    public Task createTask(TaskRequestDto taskRequestDto, Long projectId, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+    public Task createTask(TaskRequestDto taskRequestDto, Long projectId) {
+        User reporter = authService.getCurrentUser();
+
+        User assignedUser = null;
+        if (taskRequestDto.assignedToUserId() != null) {
+            // Nur wenn die ID nicht null ist, den User suchen und zuweisen
+            assignedUser = userRepository.findById(taskRequestDto.assignedToUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Assigned user with id " + taskRequestDto.assignedToUserId() + " not found"));
+        }
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
@@ -36,19 +43,33 @@ public class TaskService {
         Task newTask = new Task();
         newTask.setTitle(taskRequestDto.title());
         newTask.setDescription(taskRequestDto.description());
+        newTask.setComment(taskRequestDto.comment());
         newTask.setDeadline(taskRequestDto.deadline());
-        newTask.setReportedBy(user);
+        newTask.setReportedBy(reporter);
         newTask.setBelongsTo(project);
+        if (assignedUser != null) {
+            newTask.setAssignedTo(assignedUser);
+        }
         return taskRepository.save(newTask);
     }
 
     public Optional<Task> updateTask(Long id, TaskRequestDto updatedTask) {
         return taskRepository.findById(id)
                 .map(existingTask -> {
+                    User assignedUser = null;
+                    if (updatedTask.assignedToUserId() != null) {
+                        // Nur wenn die ID nicht null ist, den User suchen und zuweisen
+                        assignedUser = userRepository.findById(updatedTask.assignedToUserId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Assigned user with id " + updatedTask.assignedToUserId() + " not found"));
+                    }
                     existingTask.setTitle(updatedTask.title());
                     existingTask.setDescription(updatedTask.description());
+                    existingTask.setComment(updatedTask.comment());
                     existingTask.setState(updatedTask.state());
                     existingTask.setDeadline(updatedTask.deadline());
+                    if (assignedUser != null) {
+                        existingTask.setAssignedTo(assignedUser);
+                    }
                     return taskRepository.save(existingTask);
                 });
     }
